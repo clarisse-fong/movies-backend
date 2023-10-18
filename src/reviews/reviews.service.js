@@ -1,6 +1,7 @@
 const knex = require("../db/connection");
 const mapProperties = require("../utils/map-properties");
 
+//For a given movieId, returns the list of reviews for that movieId from the db.
 function readByMovieId(movieId) {
   return knex("reviews as r")
     .join("critics as c", "r.critic_id", "c.critic_id")
@@ -33,23 +34,17 @@ function readByMovieId(movieId) {
     );
 }
 
-const addCriticsCategory = mapProperties({
-  critic_id: "critics.critic_id",
-  preferred_name: "critics.preferred_name",
-  surname: "critics.surname",
-  organization_name: "critics.organization_name",
-  created_at: "critics.created_at",
-  updated_at: "critics.updated_at",
-});
-
+//Deletes a review from the db for a given reviewId.
 function destroy(review_id) {
   return knex("reviews").where({ review_id }).del();
 }
 
+//If the given review_id exists, return the review object.
 function read(review_id) {
   return knex("reviews").select("*").where({ review_id }).first();
 }
 
+//After updating a review, this function is used to retrieve the new data and correctly formats the review object.
 function readAndFormat(review_id) {
   return knex("reviews as r")
     .join("critics as c", "r.critic_id", "c.critic_id")
@@ -81,12 +76,12 @@ function readAndFormat(review_id) {
     });
 }
 
+//Updates a review in the db for a given review id with the content submitted.
 function update(updatedReview) {
   return knex("reviews")
     .select("*")
     .where({ review_id: updatedReview.review_id })
-    .update(updatedReview)
-    .then(console.log);
+    .update(updatedReview);
 }
 
 module.exports = {

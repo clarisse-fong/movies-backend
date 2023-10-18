@@ -1,17 +1,14 @@
 const service = require("./reviews.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
+//For a given movieId, returns the list of reviews for that movieId.
 async function readByMovieId(req, res, next) {
   const movieId = req.params.movieId;
   const data = await service.readByMovieId(movieId);
-  //reviews data joined with the critics data
-  //foreign key that connects both of them: critic_id
-  //when you get the data, comes back in an array
-  //make your own objects (map it over yourself)
-
   res.json({ data: data });
 }
 
+//Checks if a review with a given reviewId exists. If it does exist, save the review to res.locals.review. Else, send a 404 error.
 async function reviewExists(req, res, next) {
   const reviewId = req.params.reviewId;
   const foundReview = await service.read(reviewId);
@@ -23,12 +20,14 @@ async function reviewExists(req, res, next) {
   }
 }
 
+//Deletes a review for a given reviewId.
 async function destroy(req, res, next) {
-  const reviewId = req.params.reviewId;
+  const reviewId = res.locals.review.review_id;
   await service.delete(reviewId);
   res.sendStatus(204);
 }
 
+//Updates a review for a given review id with the content submitted.
 async function update(req, res, next) {
   const updatedReview = {
     ...res.locals.review,
@@ -43,7 +42,7 @@ async function update(req, res, next) {
 }
 
 module.exports = {
-  readByMovieId,
-  delete: [reviewExists, destroy],
-  update: [reviewExists, update],
+  readByMovieId: [asyncErrorBoundary(readByMovieId)],
+  delete: [asyncErrorBoundary(reviewExists), asyncErrorBoundary(destroy)],
+  update: [asyncErrorBoundary(reviewExists), asyncErrorBoundary(update)],
 };
