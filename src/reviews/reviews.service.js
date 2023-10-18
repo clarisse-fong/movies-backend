@@ -5,17 +5,7 @@ function readByMovieId(movieId) {
   return knex("reviews as r")
     .join("critics as c", "r.critic_id", "c.critic_id")
     .select(
-      "r.review_id",
-      "r.content",
-      "r.score",
-      "r.created_at",
-      "r.updated_at",
-      "r.critic_id",
-      "r.movie_id",
-      "c.critic_id",
-      "c.preferred_name",
-      "c.surname",
-      "c.organization_name",
+      "*",
       "c.created_at as critic_created_at",
       "c.updated_at as critic_updated_at"
     )
@@ -95,7 +85,7 @@ function update(updatedReview) {
   return knex("reviews")
     .select("*")
     .where({ review_id: updatedReview.review_id })
-    .update(updatedReview, "*")
+    .update(updatedReview)
     .then(console.log);
 }
 
