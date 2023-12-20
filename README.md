@@ -6,4 +6,4 @@
 
 Technology: Node.js, Express, and Knex. Version control with Git. 
 
-You can access the frontend application (here)[https://movie-frontend-84do.onrender.com/].
+You can access the frontend application [here](https://movie-frontend-84do.onrender.com/).
